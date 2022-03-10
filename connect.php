@@ -15,5 +15,5 @@
     echo 'Échec lors de la connexion : ' . $e->getMessage();
   }
 
-  echo"hello";
+  
   ?>
