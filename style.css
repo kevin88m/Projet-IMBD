@@ -6,3 +6,7 @@
         height: auto;
       }
 
+      select option {
+        font-size: 9rem;
+        padding: 12px 50px;
+    }
