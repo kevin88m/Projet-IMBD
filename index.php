@@ -2,8 +2,21 @@
 
 include('connect.php');
 
+if (isset($_POST['order'])) {
+  $order = $_POST['order'];
+}
+else {
+  $order = "DESC";
+}
 
-
+if (isset($_POST['filter']))
+{
+  $filter = trim($_POST['filter']);
+}
+else
+{
+  $filter = "";
+}
 
 if (isset($_POST['btnClear'])) {
 }
@@ -12,32 +25,24 @@ if (isset($_POST['btnClear'])) {
 $sql = "SELECT Titre_film,Genre,Casting,ID,Date_ajout FROM films ";
 $params = array();
 
-
-
-if (isset($_POST['filter'])) {
-
-  $filter = trim($_POST['filter']);
-  $sql .= "WHERE Titre_film  LIKE ? OR Genre LIKE ? OR Casting LIKE ? OR Date_ajout LIKE ?";
+if ($filter)
+{
+  $sql .= "WHERE Titre_film LIKE ? OR Genre LIKE ? OR Casting LIKE ? OR Date_ajout LIKE ?";
   $params[] = '%' . $filter . '%';
   $params[] = '%' . $filter . '%';
   $params[] = '%' . $filter . '%';
   $params[] = '%' . $filter . '%';
-} else {
-  if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
-  }
 }
 
+$sql .= "ORDER BY Titre_film $order";
 
+$film = $pdo->prepare($sql);
+$film->execute($params);
 
-if (isset($_POST['order'])){
-$order =$_POST['order'];
-}else{
-  $order="DESC";
+if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
+
 }
 
-$sql="SELECT * FROM films ORDER BY Titre_film $order";
-$prepared = $pdo->prepare($sql);
-$prepared->execute($params);
 
 ?>
 
@@ -75,38 +80,34 @@ $prepared->execute($params);
     </div>
   </nav>
 
-  <form action="" method="POST">
-    <div class="row">
-      <div class="col-sm-4">
-        <div class="input-group ml-5">
-          <select name="order" class="form-control">
 
-            <option name="">--Selection option</option>
-
-            <option value="DESC" >
-              (Ordre Décroissant)</option>
-
-            <option value="ASC" >
-              (Ordre croissant)</option>
-
-          </select>
-
-          <button type="submit" class="input-group-text" id="basic-addon2">Filtrage</button>
-        </div>
-
-      </div>
-    </div>
-  </form>
-
-  
-
-  
 
 
 
   <h3>LISTE DES FILMS
 
     <form class="filterForm" method="POST" action="">
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="input-group ml-5">
+            <select name="order" class="form-control">
+
+              <option value="">--Selection option</option>
+
+              <option value="DESC">
+                (Ordre Décroissant)</option>
+
+              <option value="ASC">
+                (Ordre croissant)</option>
+
+            </select>
+
+            <button type="submit" class="input-group-text" id="basic-addon2">Filtrage</button>
+          </div>
+
+        </div>
+      </div>
+      
       <input type="text" id="filter" name="filter" autofocus="true" placeholder="filtrer les recherches" />
       <input type="submit" name="btnFilter" id="btnFilter" value="entrer" />
       <input type="submit" name="btnClear" id="btnClear" value="retirer" />
@@ -117,10 +118,8 @@ $prepared->execute($params);
   </h3>
   </div>
   <?php
-  if ($prepared->rowCount() > 0) {
-
-
-
+  
+  if ($film) {
 
     echo '<table  width="70% cellpadding=" 5" cellspace="5" >';
     echo '<tr>';
@@ -131,20 +130,23 @@ $prepared->execute($params);
 
     echo '</tr>';
 
-      $prepared->setFetchMode(PDO::FETCH_ASSOC);
-      while ($row = $prepared->fetch()) {
+
+    if ($film)
+    {
+      $film->setFetchMode(PDO::FETCH_ASSOC);
+      while ($row = $film->fetch()) {
         echo '<tr data-ref="' . $row['ID'] . '">';
         echo '<td>' . $row['Titre_film'] . '</td>';
         echo '<td>' . $row['Genre'] . '</td>';
         echo '<td>' . $row['Casting'] . '</td>';
         echo '<td>' . $row['Date_ajout'] . '</td>';
-
+      }
     }
     echo '</table>';
-  } else {
+  }
+  else {
     echo '<p>Pas de films actuellement disponible.<p>';
   }
-
   ?>
 
 
