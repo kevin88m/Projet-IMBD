@@ -2,19 +2,25 @@
 
 include('connect.php');
 
+$count = $pdo->prepare("select count(ID) as cpt from films");
+$count->setFetchMode(PDO::FETCH_ASSOC);
+$count->execute();
+$tcount = $count->fetchAll();
+
+@$page = $_GET['page'];
+$nbr_elements_par_page = 10;
+$nbr_de_pages = ceil($tcount[0]["cpt"] / $nbr_elements_par_page);
+$debut = ($page - 1) * $nbr_elements_par_page;
+
 if (isset($_POST['order'])) {
   $order = $_POST['order'];
-}
-else {
+} else {
   $order = "DESC";
 }
 
-if (isset($_POST['filter']))
-{
+if (isset($_POST['filter'])) {
   $filter = trim($_POST['filter']);
-}
-else
-{
+} else {
   $filter = "";
 }
 
@@ -25,8 +31,7 @@ if (isset($_POST['btnClear'])) {
 $sql = "SELECT Titre_film,Genre,Casting,ID,Date_ajout FROM films ";
 $params = array();
 
-if ($filter)
-{
+if ($filter) {
   $sql .= "WHERE Titre_film LIKE ? OR Genre LIKE ? OR Casting LIKE ? OR Date_ajout LIKE ?";
   $params[] = '%' . $filter . '%';
   $params[] = '%' . $filter . '%';
@@ -36,11 +41,12 @@ if ($filter)
 
 $sql .= "ORDER BY Titre_film $order";
 
+$sql .= " LIMIT $debut, $nbr_elements_par_page";
+
 $film = $pdo->prepare($sql);
 $film->execute($params);
 
 if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
-
 }
 
 
@@ -59,6 +65,7 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
+<header><?php echo $tcount[0]["cpt"] ?>enregistrements</header>
 
 <body>
 
@@ -71,22 +78,40 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
           <img src="image/imdb-logo-AF81176825-seeklogo.com.jpg" height=55 width=55>
         </li>
         <li><a href="#">Home</a></li>
-        <li><a href="#">Page 1</a></li>
-        <li><a href="#">Page 2</a></li>
-        <li><a href="#">Page 3</a></li>
+
         </li>
 
       </ul>
     </div>
   </nav>
 
+  <nav aria-label="...">
+    <ul class="pagination">
+      <li class="page-item ">
+        <a class="page-link" href="?page=<?= $page - 1 ?>" tabindex="-1">Précédent</a>
+      </li>
+      <?php
 
+      for ($i = 1; $i <= $nbr_de_pages; $i++) {
+
+        echo "<li><a href='?page=$i'>$i</a></li>&nbsp";
+      }
+
+      ?>
+      <li class="page-item ">
+
+        <a class="page-link" href="?page=<?= $page + 1 ?>">Prochain</a>
+      </li>
+    </ul>
+  </nav>
 
 
 
   <h3>LISTE DES FILMS
 
     <form class="filterForm" method="POST" action="">
+
+
       <div class="row">
         <div class="col-sm-4">
           <div class="input-group ml-5">
@@ -95,10 +120,10 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
               <option value="">--Selection option</option>
 
               <option value="DESC">
-                (Ordre Décroissant)</option>
+                (Ordre croissant)</option>
 
               <option value="ASC">
-                (Ordre croissant)</option>
+                (Ordre décroissant)</option>
 
             </select>
 
@@ -107,7 +132,7 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
 
         </div>
       </div>
-      
+
       <input type="text" id="filter" name="filter" autofocus="true" placeholder="filtrer les recherches" />
       <input type="submit" name="btnFilter" id="btnFilter" value="entrer" />
       <input type="submit" name="btnClear" id="btnClear" value="retirer" />
@@ -118,7 +143,7 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
   </h3>
   </div>
   <?php
-  
+
   if ($film) {
 
     echo '<table  width="70% cellpadding=" 5" cellspace="5" >';
@@ -131,8 +156,7 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
     echo '</tr>';
 
 
-    if ($film)
-    {
+    if ($film) {
       $film->setFetchMode(PDO::FETCH_ASSOC);
       while ($row = $film->fetch()) {
         echo '<tr data-ref="' . $row['ID'] . '">';
@@ -143,8 +167,7 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
       }
     }
     echo '</table>';
-  }
-  else {
+  } else {
     echo '<p>Pas de films actuellement disponible.<p>';
   }
   ?>
