@@ -8,6 +8,10 @@ $count->execute();
 $tcount = $count->fetchAll();
 
 @$page = $_GET['page'];
+if ($page < 1) {
+  $page = 1;
+}
+
 $nbr_elements_par_page = 10;
 $nbr_de_pages = ceil($tcount[0]["cpt"] / $nbr_elements_par_page);
 $debut = ($page - 1) * $nbr_elements_par_page;
@@ -45,7 +49,7 @@ $sql .= " LIMIT $debut, $nbr_elements_par_page";
 
 $film = $pdo->prepare($sql);
 $film->execute($params);
-
+Var_dump($film);
 if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
 }
 
@@ -64,6 +68,7 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="style.css" rel="stylesheet">
 </head>
 <header><?php echo $tcount[0]["cpt"] ?>enregistrements</header>
 
@@ -75,7 +80,7 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
       <ul class="nav navbar-nav">
         <li class=active>
 
-          <img src="image/imdb-logo-AF81176825-seeklogo.com.jpg" height=55 width=55>
+          <img src="image/imdb-logo-AF81176825-seeklogo.com.jpg" width=110 height=110>
         </li>
         <li><a href="#">Home</a></li>
 
