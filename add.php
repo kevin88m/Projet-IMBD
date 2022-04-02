@@ -1,88 +1,256 @@
 <?php
+// Include connect file
+require_once "connect.php";
+
+// Define variables and initialize with empty values
+
+$film = $genre = $realisateur =
+    $scenario = $casting =  $date_de_sortie = $date_ajout = "";
+
+$film_err = $genre_err = $realisateur_err =
+    $scenario_err = $casting_err = $date_de_sortie_err =
+    $date_ajout_err = "";
+
+// Processing form data when form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // Validate film
+
+    $input_film = trim($_POST["film"]);
+    if (empty($input_film)) {
+
+        $film_err = "Remplissez le champs film.";
+    } else {
+        $film = $input_film;
+    }
 
 
+    $input_genre = trim($_POST["genre"]);
+    if (empty($input_genre)) {
+        $genre_err = "Remplissez le champs genre.";
+    } else {
+        $genre = $input_genre;
+    }
 
-require_once('connect.php');
+    $input_realisateur = trim($_POST["realisateur"]);
+    if (empty($input_realisateur)) {
+        $realisateur_err = "Remplissez le champs réalisateur.";
+    } else {
+        $realisateur = $input_realisateur;
+    }
+
+    $input_scenario = trim($_POST["scenario"]);
+    if (empty($input_scenario)) {
+        $scenario_err = "Remplissez le champs scénario.";
+    } else {
+       $scenario = $input_scenario;
+    }
+
+    $input_casting = trim($_POST["casting"]);
+    if (empty($input_casting)) {
+        $casting_err = "Remplissez le champs Acteurs principaux.";
+    } else {
+        $casting = $input_casting;
+    }
+    $input_date_de_sortie = trim($_POST["date_de_sortie"]);
+    if (empty($input_date_de_sortie)) {
+        $date_de_sortie_err = "Remplissez la date de sortie.";
+    } else {
+        $date_de_sortie = $input_date_de_sortie;
+    }
+
+    $input_date_ajout = trim($_POST["date_ajout"]);
+    if (empty($input_date_ajout)) {
+        $date_ajout_err= "Remplissez la date d'ajout.";
+    } else {
+        $date_ajout = $input_date_ajout;
+    }
+    // Check input errors before inserting in database
+    if (
+        empty($film_err) && empty($genre_err)
+        && empty($realisateur_err) && empty($scenario_err)
+        && empty($casting_err) && empty($date_de_sortie_err)
+        && empty($date_ajout_err)
+        ) {
+        // Prepare an insert statement
+
+        $sql = "INSERT INTO films
+        (   Titre_film,
+            Genre,
+            Realisateur,
+            Scenario,
+            Casting,
+            Date_de_sortie,
+            Date_ajout) 
+                VALUES 
+        (   :film, 
+            :genre, 
+            :realisateur,
+            :scenario,
+            :casting,
+            :date_de_sortie,
+            :date_ajout)";
 
 
+        if ($stmt = $pdo->prepare($sql)) {
+            // Bind variables to the prepared statement as parameters
+            $stmt->bindParam(":film", $param_film);
+            $stmt->bindParam(":genre", $param_genre);
+            $stmt->bindParam(":realisateur", $param_realisateur);
+            $stmt->bindParam(":scenario", $param_scenario);
+            $stmt->bindParam(":casting", $param_casting);
+            $stmt->bindParam(":date_de_sortie", $param_date_de_sortie);
+            $stmt->bindParam(":date_ajout", $param_date_ajout);
+
+            // Set parameters
+            $param_film = $film;
+            $param_genre = $genre;
+            $param_realisateur = $realisateur;
+            $param_scenario = $scenario;
+            $param_casting = $casting;
+            $param_date_de_sortie = $date_de_sortie;
+            $param_date_ajout = $date_ajout;
+            // Attempt to execute the prepared statement
+            if ($stmt->execute()) {
+                // Records created successfully. Redirect to landing page
+                header("location: index1.php");
+                exit();
+            } else {
+                echo "Oops!Quelque chose ne se déroule pas comme prévu ,reéssayer ultérieurement .";
+            }
+        }
+
+        // Close statement
+        unset($stmt);
+    }
+
+    // Close connection
+    unset($pdo);
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <title>Ajouter un film</title>
+    <title>Create Record</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .wrapper {
+            width: 600px;
+            margin: 0 auto;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        div.card-header {
+            padding: 1.5rem 1rem;
+            margin-bottom: 0;
+            background-color: rgb(0 0 0);
+        }
+
+        img {
+            max-width: 80%;
+            height: auto;
+        }
+    </style>
 </head>
 
 <body>
-    <main class="container">
-        <div class="row">
-            <section class="col-12">
-                <h2>Ajouter un film</h2>
-                <form method="POST">
-                    <div class="form-group">
-                        <label for="Titre_film">titre du film</label>
-                        <input type="text" id="Titre_film" name="Titre_film"
-                        class="form-control"
-                        >
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="Genre">Genre</label>
-                        <input type="text" id="Genre" name="Genre"
-                        class="form-control">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
 
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="Realisateur">Réalisateur</label>
-                        <input type="text" id="Realisateur" name="Realisateur"
-                        class="form-control">
+            <ul class="nav navbar-nav">
+                <li class=active>
 
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="Scenario">Scénario</label>
-                        <input type="text"  id="Scenario" name="Scenario"
-                        class="form-control">
-   
-                    </div>
+                    <img src="image/imdb-logo-AF81176825-seeklogo.com.jpg" width=110 height=110>
+                </li>
 
-                    <div class="form-group">
-                        <label for="Casting">Acteurs principaux</label>
-                        <input type="text" id="Casting" name="Casting"
-                        class="form-control">
 
-                    </div>
 
-                    <div class="form-group">
-                        <label for="Date_de_sortie">date de sortie</label>
-                        <input type="date" id="Date_de_sortie" name="Date_de_sortie"
-                        class="form-control">
-   
-                    </div>
-
-                    <div class="form-group">
-                        <label for="Date_ajout">Date d'ajout</label>
-                        <input type="date" id="Date_ajout" name="Date_ajout"
-                        class="form-control">
-
-                    </div>
-
-                    <button type="button" class="btn btn-warning">Envoyer</button>
-
-                </form>
-            </section>
-
+            </ul>
         </div>
+    </nav>
+    <div class="wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="mt-5">Ajouter un film</h2>
+
+                    <p>S'il vous plaît remplissez et soumettre le formulaire pour enregistrer dans la base de donnée.</p>
+
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+
+                        <div class="form-group">
+
+                            <label>Film</label>
+                            <input type="text" name="film" class="form-control 
+                            <?php echo (!empty($film_err)) ? 'is-invalid' : ''; ?>
+                            " value="<?php echo $film; ?>">
+                            <span class="invalid-feedback"><?php echo $film_err; ?></span>
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Genre</label>
+
+                            <input type="text" name="genre" class="form-control 
+                            <?php echo (!empty($genre_err)) ? 'is-invalid' : ''; ?>
+                            " value="<?php echo $genre; ?>">
+                            <span class="invalid-feedback"><?php echo $genre_err; ?></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Réalisateur</label>
+
+                            <input type="text" name="realisateur" class="form-control 
+                            <?php echo (!empty($realisateur_err)) ? 'is-invalid' : ''; ?>
+                            " value="<?php echo $realisateur; ?>">
+                            <span class="invalid-feedback"><?php echo $realisateur_err; ?></span>
+                        </div>
 
 
-    </main>
+                        <div class="form-group">
+                            <label>Scénario</label>
+                            <textarea name="scenario" class="form-control <?php echo (!empty($scenario_err)) ? 'is-invalid' : ''; ?>">
+                            <?php echo $scenario; ?></textarea>
+                            <span class="invalid-feedback"><?php echo $scenario_err; ?></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Acteurs principaux</label>
+                            <input type="text" name="casting" class="form-control 
+                            <?php echo (!empty($casting_err)) ? 'is-invalid' : ''; ?>
+                            " value="<?php echo $casting; ?>">
+                            <span class="invalid-feedback"><?php echo $casting_err; ?></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Date de sortie</label>
+                            <input type="date" name="date de sortie" class="form-control 
+                            <?php echo (!empty($date_de_sortie_err)) ? 'is-invalid' : ''; ?>
+                            " value="<?php echo $date_de_sortie; ?>">
+                            <span class="invalid-feedback"><?php echo $date_de_sortie_err; ?></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Date d'ajout</label>
+                            <input type="date" name="date ajout" class="form-control
+                            <?php echo (!empty($date_ajout_err)) ? 'is-invalid' : ''; ?>
+                            " value="<?php echo $date_ajout; ?>">
+                            <span class="invalid-feedback"><?php echo $date_ajout_err; ?></span>
+                        </div>
+
+                        <input type="submit" class="btn btn-danger" value="ENVOYER">
+                        <a href="index1.php" class="btn btn-warning ml-2">ANNULER</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
