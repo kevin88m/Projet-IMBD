@@ -2,19 +2,13 @@
 
 // Check existence of id parameter before processing further
 if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
-    // Include config file
-    include('connect.php');
-    
+    // Include connect file
+    require_once "connect.php";
     /* Attempt MySQL server connection. Assuming you are running MySQL
-    server with default setting (user 'root' with no root password) */
+    server with default setting (user 'root' with  root password) */
    
-     
-    // Close connection
-    unset($pdo);
-    
-
-    // Prepare a select statement
-    $sql = "SELECT * FROM films WHERE ID = :id";
+     // Prepare a select statement
+    $sql = "SELECT * FROM films WHERE id = :id";
 
     if ($stmt = $pdo->prepare($sql)) {
         // Bind variables to the prepared statement as parameters
@@ -31,7 +25,7 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 // Retrieve individual field value
-                $id= $row['ID'];
+                
                 $film = $row["Titre_film"];
                 $genre = $row['Genre'];
                 $realisateur = $row['Realisateur'];
@@ -45,7 +39,7 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
                 exit();
             }
         } else {
-            echo "Oops! Something went wrong. Please try again later.";
+            echo "Oops!quelque chose ne va pas.";
         }
     }
 

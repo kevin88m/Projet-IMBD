@@ -146,9 +146,9 @@ $date = date('d/m/Y', strtotime($date));
                 echo "<td>" . $row['Date_de_sortie'] . "</td>";
                 echo "<td>" . $row['Date_ajout'] . "</td>";
 
-                echo '<td><a href="update.php?id="" class="mr-1" title="Modification" data-toggle="tooltip"><span class="fa fa-pencil"></span></a></td>';
-                echo '<td><a href="read.php "" class="mr-1"  title="Lecture" data-toggle="tooltip"><span class="fa fa-eye"></span></a></td>';
-                echo '<td><a href="delete.php?id='. $row['ID'] .'" class="mr-1"title="Supprimer" data-toggle="tooltip"><span class="fa fa-trash"></span></a></td>';
+                echo '<td><a href="edit.php?id='. $row['ID'] .'" class="mr-1"  title="Modification" data-toggle="tooltip"><span class="fa fa-pencil"></span></a></td>';
+                echo '<td><a href="read.php?id='. $row['ID'] .'" class="mr-1"  title="Lecture" data-toggle="tooltip"><span class="fa fa-eye"></span></a></td>';
+                echo '<td><a href="delete.php?id='. $row['ID'] .'"class="mr-1" title="Supprimer" data-toggle="tooltip"><span class="fa fa-trash"></span></a></td>';
                 
 
                 echo "</td>";

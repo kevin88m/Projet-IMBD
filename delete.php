@@ -1,7 +1,7 @@
 <?php
 // Process delete operation after confirmation
 if(isset($_POST["id"]) && !empty($_POST["id"])){
-    // Include config file
+    // Include connect file
     require_once "connect.php";
     
     // Prepare a delete statement
@@ -40,7 +40,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Delete Record</title>
@@ -59,12 +59,13 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                 <div class="col-md-12">
                     <h2 class="mt-5 mb-3">Supprimer le film</h2>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                        <div class="alert alert-danger">
+                        <div class="alert alert-warning">
                             <input type="hidden" name="id" value="<?php echo trim($_GET["id"]); ?>"/>
-                            <p>Êtes vous sûre de vouloir supprimer ce film?</p>
+                            
+                            <p class="mt-4 mb-5">Êtes vous sûre de vouloir supprimer ce film?</p>
                             <p>
                                 <input type="submit" value="Oui" class="btn btn-danger">
-                                <a href="index1.php" class="btn btn-secondary ml-2">Non</a>
+                                <a href="index1.php" class="btn btn-warning ml-4">Non</a>
                             </p>
                         </div>
                     </form>

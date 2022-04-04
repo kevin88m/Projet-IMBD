@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($input_scenario)) {
         $scenario_err = "Remplissez le champs scénario.";
     } else {
-       $scenario = $input_scenario;
+        $scenario = $input_scenario;
     }
 
     $input_casting = trim($_POST["casting"]);
@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $input_date_ajout = trim($_POST["date_ajout"]);
     if (empty($input_date_ajout)) {
-        $date_ajout_err= "Remplissez la date d'ajout.";
+        $date_ajout_err = "Remplissez la date d'ajout.";
     } else {
         $date_ajout = $input_date_ajout;
     }
@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         && empty($realisateur_err) && empty($scenario_err)
         && empty($casting_err) && empty($date_de_sortie_err)
         && empty($date_ajout_err)
-        ) {
+    ) {
         // Prepare an insert statement
 
         $sql = "INSERT INTO films
