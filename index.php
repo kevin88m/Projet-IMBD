@@ -64,7 +64,7 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
   <title>IMDB</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <Link href = "assets / css / bootstrap-responsive.css" rel = "stylesheet"> 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -73,23 +73,21 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
 <header><?php echo $tcount[0]["cpt"] ?>enregistrements</header>
 
 <body>
+      <nav class="navbar">
+      <div class="logo-title"> <img src="image/imdb-logo-AF81176825-seeklogo.com.jpg" width=150 height=110></div>
 
-  <nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-
-      <ul class="nav navbar-nav">
-        <li class=active>
-
-          <img src="image/imdb-logo-AF81176825-seeklogo.com.jpg" width=110 height=110>
-        </li>
-        <li><a href="index1.php">CRUD PAGE BACK-END</a></li>
-
-        </li>
-
+      
+      <div  class="navbar-links">
+      <ul>
+      <li><a href="index1.php">CRUD PAGE BACK-END</a></li>
       </ul>
-    </div>
-  </nav>
+      </div>
+      </div>
+      </nav>
+  
 
+
+      
   <nav aria-label="...">
     <ul class="pagination">
       <li class="page-item ">
@@ -147,37 +145,43 @@ if (isset($_SESSION['filter']) && strlen($_SESSION['filter']) > 0) {
 
   </h3>
   </div>
+  
   <?php
-
+    
   if ($film) {
-
-    echo '<table  width="70% cellpadding=" 5" cellspace="5" >';
+    echo '<div class="table">';
+    echo '<table class="table borderless" >';
+    echo '<thead>';
     echo '<tr>';
-    echo '<th class="Titre_film"><a href="index.php?sort=Titre_film">Film</a></th>';
-    echo '<th class="Genre"><a href="index.php?sort=Genre">Genre</a></th>';
-    echo '<th class="Casting"><a href="index.php?sort=Casting">Acteurs principaux</a></th>';
-    echo '<th class="Date_ajout"><a href="index.php?sort=Date_ajout">Date_ajout</a></th>';
+    echo '<th ><a href="index.php?">Film</a></th>';
+    echo '<th><a href="index.php?">Genre</a></th>';
+    echo '<th><a href="index.php?">Acteurs principaux</a></th>';
+    echo '<th><a href="index.php?">Date_ajout</a></th>';
 
     echo '</tr>';
 
-
     if ($film) {
-      $film->setFetchMode(PDO::FETCH_ASSOC);
+      $film->setFetchMode(PDO::FETCH_LAZY  );
       while ($row = $film->fetch()) {
+        
+        echo'<tbody>';
         echo '<tr data-ref="' . $row['ID'] . '">';
-        echo '<td>' . $row['Titre_film'] . '</td>';
-        echo '<td>' . $row['Genre'] . '</td>';
-        echo '<td>' . $row['Casting'] . '</td>';
-        echo '<td>' . $row['Date_ajout'] . '</td>';
+        echo '<td >' . $row['Titre_film'] . '</td>';
+        echo '<td >' . $row['Genre'] . '</td>';
+        echo '<td >' . $row['Casting'] . '</td>';
+        echo '<td >' . $row['Date_ajout'] . '</td>';
       }
     }
+    echo '</tbody>';
     echo '</table>';
+    echo '</div>';
+
   } else {
     echo '<p>Pas de films actuellement disponible.<p>';
   }
   ?>
 
-
+  </div>
 
 
 
